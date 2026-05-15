@@ -1,0 +1,170 @@
+:root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --line: #dbe4f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --brand: #2563eb;
+    --brand-dark: #1d4ed8;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --success: #16a34a;
+}
+
+body {
+    background: radial-gradient(circle at top right, #dbeafe, transparent 40%),
+    radial-gradient(circle at top left, #e2e8f0, transparent 32%),
+    var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 1180px;
+}
+
+.app-navbar {
+    background: linear-gradient(120deg, #0f172a 0%, #1e293b 40%, #0b1220 100%);
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.35);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.app-navbar .navbar-brand {
+    letter-spacing: 0.2px;
+}
+
+.app-navbar .nav-link {
+    color: #e2e8f0;
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 0.42rem 0.82rem !important;
+    transition: 0.2s ease;
+}
+
+.app-navbar .nav-link:hover {
+    color: #ffffff;
+    background: rgba(148, 163, 184, 0.22);
+}
+
+.welcome-banner {
+    background: linear-gradient(125deg, #0f172a 0%, #1d4ed8 100%);
+    border-radius: 18px;
+    color: #ffffff;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 14px 34px rgba(30, 64, 175, 0.25);
+}
+
+.welcome-banner p {
+    margin: 0;
+    color: #dbeafe;
+}
+
+.card {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.card-header {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--line);
+    font-weight: 700;
+}
+
+.metric-card {
+    color: #ffffff;
+    border: 0;
+    overflow: hidden;
+}
+
+.metric-card .metric-label {
+    font-size: 0.82rem;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.metric-card .metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.metric-card .metric-icon {
+    font-size: 1.2rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.metric-total {
+    background: linear-gradient(135deg, #111827 0%, #334155 100%);
+}
+
+.metric-high {
+    background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+}
+
+.metric-medium {
+    background: linear-gradient(135deg, #92400e 0%, #f59e0b 100%);
+}
+
+.metric-low {
+    background: linear-gradient(135deg, #14532d 0%, #16a34a 100%);
+}
+
+.panel-table .table {
+    margin-bottom: 0;
+}
+
+.panel-table .table > :not(caption) > * > * {
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    border-color: #e5edf7;
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: #f8fbff;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btn-dark {
+    background-color: var(--brand);
+    border-color: var(--brand);
+}
+
+.btn-dark:hover {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+}
+
+.btn-outline-dark {
+    border-color: #94a3b8;
+    color: #334155;
+}
+
+.btn-outline-dark:hover {
+    background: #334155;
+    border-color: #334155;
+}
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.auth-container {
+    width: 100%;
+}
+
+.auth-card {
+    border: 0;
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>AI Analysis Result – Auto Guard AI</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+    <link rel="stylesheet" th:href="@{/css/app.css?v=2}"/>
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/dashboard">
+            <i class="bi bi-shield-check"></i> Auto Guard AI
+        </a>
+        <div class="navbar-nav ms-auto gap-1">
+            <a class="nav-link" href="/dashboard"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+            <a class="nav-link" href="/vehicles"><i class="bi bi-truck me-1"></i>Vehicles</a>
+            <a class="nav-link" href="/sensors/upload"><i class="bi bi-activity me-1"></i>Add Sensor</a>
+            <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                <button type="submit" class="nav-link btn btn-link p-0 border-0">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>
+            <i class="bi bi-cpu"></i>
+            AI Analysis —
+            <span th:text="${vehicle.name}"></span>
+        </h5>
+        <a th:href="@{/vehicles/{id}(id=${vehicle.id})}"
+           class="btn btn-sm btn-secondary">Back to Vehicle</a>
+    </div>
+
+    <!-- Error state -->
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle"></i>
+        AI analysis failed: <span th:text="${error}"></span>
+    </div>
+
+    <!-- Result -->
+    <div th:if="${result}">
+
+        <!-- Risk badge -->
+        <div class="card mb-3">
+            <div class="card-body d-flex align-items-center gap-4">
+                <div>
+                    <div class="text-muted small">Risk Score</div>
+                    <div class="fs-2 fw-bold"
+                         th:text="${result.riskScore} + ' / 100'"></div>
+                </div>
+                <div>
+                    <div class="text-muted small">Risk Level</div>
+                    <span th:text="${result.riskLevel}"
+                          th:class="${result.riskLevel.name() == 'HIGH'}
+                              ? 'badge bg-danger fs-6'
+                              : (${result.riskLevel.name() == 'MEDIUM'}
+                              ? 'badge bg-warning text-dark fs-6'
+                              : 'badge bg-success fs-6')">
+                    </span>
+                </div>
+                <div>
+                    <div class="text-muted small">Predicted Fault</div>
+                    <div class="fw-bold"
+                         th:text="${result.predictedFaultType}"></div>
+                </div>
+                <div>
+                    <div class="text-muted small">Mode</div>
+                    <span th:text="${mode}"
+                          th:class="${mode == 'DEEP'}
+                              ? 'badge bg-dark'
+                              : 'badge bg-secondary'">
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Explanation -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-robot"></i>
+                <span th:text="${mode == 'DEEP'}
+                    ? 'Deep Diagnostic Report'
+                    : 'Quick AI Insight'">
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="mb-0"
+                   style="white-space: pre-wrap;"
+                   th:text="${result.explanation}"></p>
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="mt-3 d-flex gap-2">
+            <form th:action="@{/predictions/{id}/deep(id=${vehicle.id})}"
+                  method="post"
+                  th:if="${mode == 'QUICK' and result.riskLevel.name() != 'LOW'}">
+                <button type="submit" class="btn btn-dark">
+                    <i class="bi bi-search"></i> Run Deep Diagnostic
+                </button>
+            </form>
+            <a th:href="@{/vehicles/{id}(id=${vehicle.id})}"
+               class="btn btn-outline-secondary">
+                Back to Vehicle
+            </a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
