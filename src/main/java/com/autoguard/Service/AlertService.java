@@ -36,4 +36,9 @@ public class AlertService {
     public long countLowRisk() {
         return faultPredictionRepository.countByRiskLevel(RiskLevel.LOW);
     }
+
+    public long countByRiskLevelForUser(RiskLevel riskLevel, Long userId) {
+        return faultPredictionRepository
+                .countByRiskLevelAndVehicle_User_Id(riskLevel, userId);
+    }
 }

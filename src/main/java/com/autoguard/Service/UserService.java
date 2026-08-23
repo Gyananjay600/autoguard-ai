@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +19,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User register(RegisterDTO dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email already registered: " + dto.getEmail());
+        String email = dto.getEmail().trim().toLowerCase(Locale.ROOT);
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("An account already exists for this email address.");
         }
         User user = User.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
+                .name(dto.getName().trim())
+                .email(email)
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .role(UserRole.OWNER)
                 .build();

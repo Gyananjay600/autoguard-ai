@@ -5,6 +5,7 @@ import com.autoguard.Model.Vehicle;
 import com.autoguard.Repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 
@@ -49,5 +50,25 @@ public class VehicleService {
 
     public long countAll() {
         return vehicleRepository.count();
+    }
+
+    public long countByUser(User user) {
+        return vehicleRepository.countByUserId(user.getId());
+    }
+
+    // Verifies the vehicle belongs to the requesting user
+// Admins and Engineers can access all vehicles
+    public Vehicle getAuthorizedVehicle(Long vehicleId, User currentUser) {
+        Vehicle vehicle = findById(vehicleId);
+        if (currentUser.getRole().name().equals("OWNER")
+                && !vehicle.getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException(
+                    "You do not have permission to access this vehicle.");
+        }
+        return vehicle;
+    }
+
+    public void verifyOwnership(Long vehicleId, User currentUser) {
+        getAuthorizedVehicle(vehicleId, currentUser);
     }
 }

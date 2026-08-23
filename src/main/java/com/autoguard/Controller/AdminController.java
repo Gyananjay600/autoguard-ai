@@ -1,5 +1,6 @@
 package com.autoguard.Controller;
 
+import com.autoguard.Repository.AIRequestLogRepository;
 import com.autoguard.enums.UserRole;
 import com.autoguard.Model.KnowledgeArticle;
 import com.autoguard.Service.KnowledgeService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminController {
 
+    private final AIRequestLogRepository aiRequestLogRepository;
     private final KnowledgeService knowledgeService;
     private final UserService userService;
 
@@ -21,6 +23,8 @@ public class AdminController {
     public String adminPanel(Model model) {
         model.addAttribute("articles", knowledgeService.getAll());
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("aiLogs",
+                aiRequestLogRepository.findAllByOrderByCreatedAtDesc());
         return "admin/panel";
     }
 

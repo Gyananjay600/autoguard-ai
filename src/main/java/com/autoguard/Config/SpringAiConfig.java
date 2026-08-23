@@ -1,7 +1,10 @@
 package com.autoguard.Config;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +12,11 @@ import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class SpringAiConfig {
+
+    @Bean
+    public VectorStore knowledgeVectorStore(EmbeddingModel embeddingModel) {
+        return SimpleVectorStore.builder(embeddingModel).build();
+    }
 
     // Model A — quick explainer (configured via spring.ai.openai.chat.options.model)
     @Bean

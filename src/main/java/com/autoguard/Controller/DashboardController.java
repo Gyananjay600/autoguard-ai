@@ -21,8 +21,10 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         User currentUser = securityUtils.getCurrentUser();
-        model.addAttribute("summary", dashboardService.getSummary());
+        boolean canViewAllVehicles = securityUtils.isAdmin() || securityUtils.isEngineer();
+        model.addAttribute("summary", dashboardService.getSummary(currentUser, canViewAllVehicles));
         model.addAttribute("user", currentUser);
+        model.addAttribute("showingAllVehicles", canViewAllVehicles);
 
         if (currentUser.getRole() == UserRole.OWNER) {
             model.addAttribute("vehicles",

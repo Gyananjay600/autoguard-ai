@@ -2,6 +2,8 @@ package com.autoguard.Controller;
 
 import com.autoguard.Model.SensorReading;
 import com.autoguard.Service.SensorService;
+import com.autoguard.Service.VehicleService;
+import com.autoguard.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +18,14 @@ import java.util.stream.Collectors;
 public class ChartController {
 
     private final SensorService sensorService;
+    private final VehicleService vehicleService;
+    private final SecurityUtils securityUtils;
 
     @GetMapping("/vehicle/{id}/sensors")
     public Map<String, Object> getSensorChartData(
             @PathVariable Long id) {
+
+        vehicleService.verifyOwnership(id, securityUtils.getCurrentUser());
 
         List<SensorReading> readings =
                 sensorService.getLatest50(id);

@@ -3,6 +3,7 @@ package com.autoguard.Controller;
 import com.autoguard.dto.PredictionResultDTO;
 import com.autoguard.Service.PredictionService;
 import com.autoguard.Service.VehicleService;
+import com.autoguard.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +16,12 @@ public class PredictionController {
 
     private final PredictionService predictionService;
     private final VehicleService vehicleService;
+    private final SecurityUtils securityUtils;
 
     @PostMapping("/{vehicleId}/quick")
     public String runQuickAnalysis(@PathVariable Long vehicleId,
                                    Model model) {
+        vehicleService.verifyOwnership(vehicleId, securityUtils.getCurrentUser());
         try {
             PredictionResultDTO result =
                     predictionService.runQuickAnalysis(vehicleId);
@@ -38,6 +41,7 @@ public class PredictionController {
     @PostMapping("/{vehicleId}/deep")
     public String runDeepDiagnostic(@PathVariable Long vehicleId,
                                     Model model) {
+        vehicleService.verifyOwnership(vehicleId, securityUtils.getCurrentUser());
         try {
             PredictionResultDTO result =
                     predictionService.runDeepDiagnostic(vehicleId);

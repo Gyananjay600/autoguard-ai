@@ -25,4 +25,6 @@ public interface FaultPredictionRepository
     List<FaultPrediction> findByRiskLevel(RiskLevel riskLevel);
 
     long countByRiskLevel(RiskLevel riskLevel);
+
+    long countByRiskLevelAndVehicle_User_Id(RiskLevel riskLevel, Long userId);
 }

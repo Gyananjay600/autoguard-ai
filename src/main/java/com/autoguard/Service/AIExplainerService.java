@@ -1,9 +1,11 @@
 package com.autoguard.Service;
 
-import com.autoguard.enums.DiagnosticMode;
 import com.autoguard.Model.AIExplanation;
+import com.autoguard.Model.AiRequestLog;
 import com.autoguard.Model.FaultPrediction;
 import com.autoguard.Repository.AIExplanationRepository;
+import com.autoguard.Repository.AIRequestLogRepository;
+import com.autoguard.enums.DiagnosticMode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -20,6 +22,10 @@ public class AIExplainerService {
     private final ChatClient quickChatClient;
 
     private final AIExplanationRepository aiExplanationRepository;
+
+    private final AIRequestLogRepository aiRequestLogRepository;
+
+    private final KnowledgeService knowledgeService;
 
     @Value("${spring.ai.openai.chat.options.model}")
     private String aiModelName;
@@ -38,13 +44,18 @@ public class AIExplainerService {
                 Risk Level: %s
                 Predicted Issue: %s
 
+                RELEVANT MAINTENANCE KNOWLEDGE:
+                %s
+
                 Please explain this to the vehicle owner in simple terms.
                 What does this mean and what should they do?
                 """,
                 sensorSummary,
                 prediction.getRiskScore(),
                 prediction.getRiskLevel(),
-                prediction.getPredictedFaultType());
+                prediction.getPredictedFaultType(),
+                knowledgeService.findRelevantContext(
+                        prediction.getPredictedFaultType() + " " + sensorSummary));
 
         String explanation = quickChatClient.prompt()
                 .user(prompt)
@@ -52,6 +63,7 @@ public class AIExplainerService {
                 .content();
 
         long latency = System.currentTimeMillis() - start;
+
         log.info("Quick AI explanation generated in {}ms using Groq {}",
                 latency, aiModelName);
 
@@ -63,6 +75,19 @@ public class AIExplainerService {
                 .explanationText(explanation)
                 .mode(DiagnosticMode.QUICK)
                 .build();
+
+        // Save AI request log
+        aiRequestLogRepository.save(
+                AiRequestLog.builder()
+                        .modelName(aiModelName)
+                        .mode("QUICK")
+                        .latencyMs(latency)
+                        .vehicleName(prediction.getVehicle().getName())
+                        .predictedFault(prediction.getPredictedFaultType())
+                        .riskScore(prediction.getRiskScore())
+                        .riskLevel(prediction.getRiskLevel().name()) // Remove .name() if riskLevel is String
+                        .build()
+        );
 
         return aiExplanationRepository.save(aiExplanation);
     }

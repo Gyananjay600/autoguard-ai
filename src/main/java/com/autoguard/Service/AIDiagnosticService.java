@@ -27,6 +27,8 @@ public class AIDiagnosticService {
 
     private final AIExplanationRepository aiExplanationRepository;
 
+    private final KnowledgeService knowledgeService;
+
     @Value("${app.ai.deep-model:${spring.ai.openai.chat.options.model}}")
     private String deepModelName;
 
@@ -63,6 +65,9 @@ public class AIDiagnosticService {
                 RECENT MAINTENANCE HISTORY:
                 %s
 
+                RELEVANT MAINTENANCE KNOWLEDGE:
+                %s
+
                 Please provide a comprehensive diagnostic report including:
                 1. Detailed analysis of the fault
                 2. Root cause assessment
@@ -78,7 +83,9 @@ public class AIDiagnosticService {
                 prediction.getRiskScore(),
                 prediction.getRiskLevel(),
                 prediction.getPredictedFaultType(),
-                maintenanceContext);
+                maintenanceContext,
+                knowledgeService.findRelevantContext(
+                        prediction.getPredictedFaultType() + " " + sensorSummary));
 
         // Deep diagnostic model is configurable; defaults to the global chat model.
         String explanation = deepChatClient.prompt()

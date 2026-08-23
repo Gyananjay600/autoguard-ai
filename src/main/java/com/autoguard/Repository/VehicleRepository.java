@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     List<Vehicle> findByUserId(Long userId);
+    long countByUserId(Long userId);
     long countByFaultPredictions_RiskLevel(RiskLevel riskLevel);
 }

@@ -33,9 +33,12 @@ public class MaintenanceService {
                 .findByVehicleIdOrderByDateDesc(vehicleId);
     }
 
-    public void markRepairDone(Long recordId) {
+    public void markRepairDone(Long recordId, Long vehicleId) {
         MaintenanceRecord record = maintenanceRecordRepository.findById(recordId)
                 .orElseThrow(() -> new RuntimeException("Record not found: " + recordId));
+        if (!record.getVehicle().getId().equals(vehicleId)) {
+            throw new IllegalArgumentException("Maintenance record does not belong to this vehicle.");
+        }
         record.setRepairDone(true);
         maintenanceRecordRepository.save(record);
     }
