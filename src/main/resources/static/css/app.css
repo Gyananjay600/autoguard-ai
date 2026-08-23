@@ -289,9 +289,44 @@ h1, h2, h3, h4, h5, .font-heading {
     margin-bottom: 0.25rem;
 }
 
+.auth-card-modern .text-muted,
+.auth-card-modern p.text-muted,
+.auth-card-modern span.text-muted,
+.auth-card-modern div.text-muted,
+.auth-hero-side .text-muted,
+.auth-hero-side p.text-muted {
+    color: #94a3b8 !important;
+}
+
 .auth-card-modern p.text-muted {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
+    color: #cbd5e1 !important;
     margin-bottom: 1rem !important;
+}
+
+/* Modern High-Contrast Dark Glass Alerts */
+.auth-card-modern .alert {
+    border-radius: 10px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+}
+
+.auth-card-modern .alert-info {
+    background: rgba(6, 182, 212, 0.15) !important;
+    border: 1px solid rgba(6, 182, 212, 0.4) !important;
+    color: #38bdf8 !important;
+}
+
+.auth-card-modern .alert-danger {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+.auth-card-modern .alert-success {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    color: #6ee7b7 !important;
 }
 
 .auth-card-modern .form-control {
