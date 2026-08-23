@@ -59,14 +59,6 @@ AutoGuard AI is an intelligent, full-stack vehicle fleet maintenance and diagnos
 4. **Access Web Application**:
    Navigate to `http://localhost:7070/auth/login`, register an account, and sign in.
 
----
-
-## Documentation Links
-
-- [PROJECT_DETAILS.md](PROJECT_DETAILS.md): In-depth architectural problem statement, technical stack breakdown, and reliability patterns.
-- [DEPLOYMENT.md](DEPLOYMENT.md): Production deployment guide covering MySQL setup, systemd services, Nginx reverse proxy, and executable JARs.
-
----
 
 ## License
 
