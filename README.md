@@ -4,114 +4,76 @@ AutoGuard AI is an enterprise-grade vehicle fleet monitoring and predictive diag
 
 By continuously analyzing raw sensor data against operational anomaly thresholds and vector-indexed service manuals, AutoGuard AI enables vehicle owners, service technicians, and fleet administrators to transition from costly reactive breakdowns to proactive predictive care.
 
-> 📄 **Technical Reference**: For exhaustive architectural specifications, technology breakdown, and data isolation models, see [PROJECT_DETAILS.md](PROJECT_DETAILS.md).
-
 ---
 
-## 📸 Interface & Command Deck Showcase
+## 🛠️ Modern Decoupled Technology Stack
 
-### 1. Split-Screen High-Tech Authentication
-High-contrast `100vh` viewport-fitted authentication experience featuring real-time feature showcases and modern frosted glass form containers.
-![Split-Screen Tech Authentication](docs/images/login-hero.png)
-
----
-
-### 2. Fleet Overview Command Center
-Centralized dashboard providing real-time fleet risk distribution counters (High, Medium, Low Risk), registered vehicle metrics, and instant navigation.
-![Fleet Overview Dashboard](docs/images/dashboard-overview.png)
-
----
-
-### 3. Interactive Vehicle Garage & Fleet Hub
-Garage card grid system with real-time client-side search filtering by vehicle name, make, model, or VIN, plus view-switching between card grid and tabular fleet layouts.
-![Vehicle Garage Cards Grid](docs/images/garage-grid.png)
-
----
-
-### 4. Telemetry HUD Command Station & Dynamic Analytics
-Vehicle command deck equipped with spec badges, dual AI analysis triggers (`QUICK` vs `DEEP`), and live Chart.js sensor telemetry charts highlighting operational danger thresholds.
-![Vehicle Telemetry HUD Station](docs/images/telemetry-hud.png)
-
----
-
-## 🎯 What AutoGuard AI Solves
-
-1. **Eliminates Reactive Breakdown Costs**: Replaces traditional "wait until it breaks" repair workflows with automated threshold monitoring and early fault prediction.
-2. **Translates Raw Telemetry into Clear Action**: Converts complex sensor metrics (RPM, temperature, oil pressure, vibration) into readable operational risk scores ($0 - 100$) and plain-English repair steps.
-3. **Grounded AI via Local RAG**: Utilizes local HuggingFace ONNX Transformer embeddings and vector search to ground Groq AI recommendations in actual technical bulletins, preventing AI hallucinations.
-4. **Multi-Tenant Security & Scoped Access**: Enforces strict role-based data isolation so vehicle owners access only their registered assets while fleet engineers and admins manage fleet-wide operations.
+| Layer | Technology & Frameworks |
+| :--- | :--- |
+| **Backend Core** | Node.js (v20+ LTS), Express.js (ES Modules), MySQL2 (Promise Connection Pool) |
+| **Security & Auth** | Stateless JWT (`jsonwebtoken`), BCrypt Password Hashing, CORS, Role-Based Access Control (`OWNER`, `ENGINEER`, `ADMIN`), Resource Ownership Scoping |
+| **Database** | MySQL 8.0, Relational schema with Foreign Keys and Indexes (`schema.sql`) |
+| **AI Integration** | Groq API (`llama-3.3-70b-versatile` / OpenAI-compatible endpoint) |
+| **RAG & Knowledge Base** | In-memory semantic keyword & vector search grounded in verified OEM technical bulletins |
+| **Frontend SPA** | React 18, Vite, React Router DOM v6, Axios (with auth interceptors) |
+| **Visuals & Charts** | Chart.js 4.4, React-Chartjs-2, Bootstrap 5.3, Bootstrap Icons, Custom Glassmorphism Theme |
+| **Typography** | Google Fonts (**Plus Jakarta Sans**, **Outfit**) |
 
 ---
 
 ## ⚡ Core Platform Capabilities
 
-- **IoT Telemetry Ingestion & Simulation**: Streams continuous vehicle sensor parameters and flags anomalies (Engine Temp $>100^\circ\text{C}$, Oil Pressure $<20\text{ PSI}$, Vibration $>1.0$, DTC codes).
+- **Interactive Public Home / Landing Page**: High-tech showcase with real-time interactive risk engine calculator.
+- **Continuous IoT Telemetry Ingestion & Simulation**: Streams live sensor parameters every 30 seconds with instant anomaly detection.
+- **Interactive Anomaly Injector**: Trigger real-world fault scenarios on-demand (Overheating $>105^\circ\text{C}$, Low Oil $<15\text{ PSI}$, Vibration $>1.8\text{ G}$, ECU Trouble Codes).
 - **Dual-Mode AI Risk Assessment**:
-  - **Quick AI Analysis (`QUICK`)**: Fast operational health summaries and immediate risk scoring.
+  - **Quick AI Analysis (`QUICK`)**: Fast operational health summaries and immediate risk scoring ($0 - 100$).
   - **Deep Diagnostic (`DEEP`)**: Exhaustive root-cause reports powered by RAG similarity retrieval across vector-indexed service manuals.
-- **Dynamic Telemetry Visualization**: Interactive Chart.js line charts tracking historical trends for Engine Temperature, RPM, Oil Pressure, and Vibration.
-- **Complete Maintenance Timeline**: Comprehensive service logging tied directly to vehicle fault predictions and AI diagnostics.
-- **Admin Control Center**: Centralized administration panel for user role management, system audit logs, and technical knowledge base authoring.
-
----
-
-## 🛠️ Technology Stack Breakdown
-
-| Layer | Technology & Frameworks |
-| :--- | :--- |
-| **Backend Core** | Java 21 (LTS), Spring Boot 3.4.4, Spring MVC, Spring Data JPA, Hibernate 6.6 |
-| **Security & Auth** | Spring Security 6, BCrypt Password Hashing, CSRF Protection, Role-Based Access Control (`OWNER`, `ENGINEER`, `ADMIN`) |
-| **Database** | MySQL 8.0, HikariCP JDBC Connection Pool |
-| **AI Integration** | Spring AI (1.0.0-M6), Groq API (`openai/gpt-oss-20b`) |
-| **RAG & Embeddings** | Spring AI Transformers (ONNX model), Local JVM Embeddings, In-Memory Vector Store |
-| **Frontend & Design** | Server-Side Thymeleaf 3, Bootstrap 5.3, Bootstrap Icons, Chart.js 4.4, Custom Vanilla CSS (`app.css`) |
-| **Typography** | Google Fonts (**Plus Jakarta Sans**, **Outfit**) |
-| **Build & Tooling** | Apache Maven |
+- **Dynamic Telemetry HUD**: Interactive Chart.js graphs tracking historical trends for Engine Temperature, RPM, Oil Pressure, and Vibration against danger thresholds.
+- **Garage Grid & Tabular Roster**: Real-time client-side search filtering by name, make, model, or VIN, plus risk level filter chips.
+- **Integrated Maintenance Timeline**: Comprehensive service logging correlated with fault predictions and completion status.
+- **Admin Control Center**: RAG knowledge article authoring, user role authorizations, and AI audit trail with inference latency metrics.
 
 ---
 
 ## 🚀 Quick Start (Run Locally)
 
 ### Prerequisites
-- **Java 21 JDK** installed.
+- **Node.js v20+** installed.
 - **MySQL 8.0** server running locally on port `3306`.
-- **Groq API Key** (for AI diagnostic generation).
+- **Groq API Key** (optional, automatic heuristic fallback included if offline).
 
-### 1. Database Creation
-Create the MySQL database named `autoguard_db`:
-```sql
-CREATE DATABASE autoguard_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 2. Environment Setup
-Copy `.env.example` to `.env` in the project root and set your MySQL credentials and Groq API key:
-```properties
-AUTOGUARD_DB_URL=jdbc:mysql://localhost:3306/autoguard_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-AUTOGUARD_DB_USERNAME=root
-AUTOGUARD_DB_PASSWORD=your_mysql_password
-AUTOGUARD_GROQ_API_KEY=your_groq_api_key
-```
-
-### 3. Launch Application
-Build and launch the Spring Boot server:
+### 1. Database Setup
+Create and initialize the MySQL database using `backend/schema.sql`:
 ```bash
-./mvnw.cmd spring-boot:run
+mysql -u root -p < backend/schema.sql
 ```
-*(On Linux/macOS: `./mvnw spring-boot:run`)*
+*(Or let `backend` automatically initialize the database schema on first boot).*
 
-### 4. Access Web Interface
-Open **[http://localhost:7070/auth/login](http://localhost:7070/auth/login)** in your browser, register a new account, and sign in to access your fleet command center!
+### 2. Launch Express Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+- Server starts on: **`http://localhost:5000`**
+- Health check: **`http://localhost:5000/api/health`**
+
+### 3. Launch React (Vite) Frontend
+In a separate terminal:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+- Frontend starts on: **`http://localhost:5173`**
 
 ---
 
-## 🔒 Security & Data Privacy
+## 🔑 Pre-Seeded Demo Credentials
 
-- **Protected Secrets**: Credentials and API keys are stored exclusively in ignored `.env` files and environment variables.
-- **Strict Data Scoping**: Vehicle routes enforce user-level ownership checks; `OWNER` users can never access unassigned fleet assets.
-- **CSRF & Password Policies**: State-mutating HTTP methods verify CSRF tokens. User registration enforces a 10+ character policy with uppercase, lowercase, and numeric validation.
-
----
-
-## 📄 Documentation Links
-
-- [PROJECT_DETAILS.md](PROJECT_DETAILS.md): Comprehensive architectural problem statement, technology stack breakdown, and reliability specifications.
+| Role | Email | Password | Scope & Permissions |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@autoguard.ai` | `Password@1234` | Full access to Admin Panel, Knowledge Base & Audit Logs |
+| **Engineer** | `engineer@autoguard.ai` | `Password@1234` | Fleet-wide vehicle monitoring, diagnostics & service logging |
+| **Owner** | `driver@autoguard.ai` | `Password@1234` | Scoped strictly to registered personal vehicles |
