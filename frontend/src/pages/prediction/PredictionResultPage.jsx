@@ -81,10 +81,10 @@ export default function PredictionResultPage() {
             )}
           </div>
           <div className="d-flex gap-2">
-            <Link to={`/vehicles/${vehicleId}`} className="btn btn-sm btn-outline-dark">
+            <Link to={`/vehicles/${vehicleId}`} className="btn btn-sm btn-outline-secondary">
               <i className="bi bi-arrow-left me-1"></i>HUD Station
             </Link>
-            <button type="button" className="btn btn-sm btn-dark" onClick={() => window.print()}>
+            <button type="button" className="btn btn-sm btn-hero-cta" onClick={() => window.print()}>
               <i className="bi bi-printer me-1"></i>Print Report
             </button>
           </div>

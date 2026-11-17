@@ -76,16 +76,16 @@ export default function DashboardPage() {
       <div className="container py-4 flex-grow-1">
         <FlashAlert success={success} error={error} onClose={() => { setSuccess(''); setError(''); }} />
 
-        {/* Hero Welcome Banner */}
+        {/* Welcome Banner */}
         <section className="welcome-banner fleet-hero mb-4">
           <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
               <div className="eyebrow"><i className="bi bi-broadcast me-1.5"></i>Command Center</div>
-              <h1 className="mb-2">Protect every journey, <span>{user?.name || 'Driver'}</span>.</h1>
-              <p className="mb-0 text-light opacity-85">
+              <h1 className="mb-1">Fleet Telemetry Deck</h1>
+              <p className="mb-0 text-light opacity-85 small">
                 {showingAllVehicles
-                  ? 'You are viewing telemetry across all active fleet assets.'
-                  : 'Your dashboard includes vehicles registered to your personal account.'}
+                  ? 'Real-time telemetry stream across all monitored assets.'
+                  : `Vehicles assigned to ${user?.name || 'your profile'}.`}
               </p>
             </div>
             <div className="hero-actions d-flex gap-2 flex-wrap">
@@ -96,33 +96,25 @@ export default function DashboardPage() {
                 disabled={simLoading}
               >
                 <i className={`bi ${simRunning ? 'bi-stop-circle' : 'bi-play-circle'} me-1`}></i>
-                {simRunning ? 'Pause Simulator' : 'Start 30s Simulator'}
+                {simRunning ? 'Pause Simulator' : 'Start 30s Stream'}
               </button>
-              <Link to="/vehicles/new" className="btn btn-light fw-semibold">
-                <i className="bi bi-plus-circle me-1.5"></i>Add Vehicle
+              <Link to="/vehicles/new" className="btn btn-hero-cta btn-sm">
+                <i className="bi bi-plus-lg me-1"></i>Add Vehicle
               </Link>
-              <Link to="/sensors/upload" className="btn btn-hero-outline">
-                <i className="bi bi-activity me-1.5"></i>Log Reading
+              <Link to="/sensors/upload" className="btn btn-hero-secondary btn-sm">
+                <i className="bi bi-activity me-1"></i>Log Reading
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Summary Cards Header */}
-        <div className="d-flex justify-content-between align-items-center mb-3 px-1">
-          <span className="section-kicker"><i className="bi bi-grid-fill me-1"></i>Fleet Overview</span>
-          <span className="scope-badge">
-            {showingAllVehicles ? 'Fleet Team View' : 'My Vehicles'}
-          </span>
-        </div>
-
         {/* Metric Summary Cards */}
         <div className="row g-3 mb-4">
           <div className="col-6 col-md-3">
             <div className="card metric-card metric-total h-100">
-              <div className="card-body d-flex justify-content-between align-items-start p-3 p-md-4">
+              <div className="card-body d-flex justify-content-between align-items-start p-3">
                 <div>
-                  <div className="metric-label">Total Vehicles</div>
+                  <div className="metric-label">Total Fleet</div>
                   <div className="metric-value">{summary.totalVehicles}</div>
                 </div>
                 <span className="metric-icon"><i className="bi bi-truck"></i></span>
@@ -132,7 +124,7 @@ export default function DashboardPage() {
 
           <div className="col-6 col-md-3">
             <div className="card metric-card metric-high h-100">
-              <div className="card-body d-flex justify-content-between align-items-start p-3 p-md-4">
+              <div className="card-body d-flex justify-content-between align-items-start p-3">
                 <div>
                   <div className="metric-label">High Risk</div>
                   <div className="metric-value">{summary.highRiskCount}</div>
@@ -144,7 +136,7 @@ export default function DashboardPage() {
 
           <div className="col-6 col-md-3">
             <div className="card metric-card metric-medium h-100">
-              <div className="card-body d-flex justify-content-between align-items-start p-3 p-md-4">
+              <div className="card-body d-flex justify-content-between align-items-start p-3">
                 <div>
                   <div className="metric-label">Medium Risk</div>
                   <div className="metric-value">{summary.mediumRiskCount}</div>
@@ -156,9 +148,9 @@ export default function DashboardPage() {
 
           <div className="col-6 col-md-3">
             <div className="card metric-card metric-low h-100">
-              <div className="card-body d-flex justify-content-between align-items-start p-3 p-md-4">
+              <div className="card-body d-flex justify-content-between align-items-start p-3">
                 <div>
-                  <div className="metric-label">Low Risk</div>
+                  <div className="metric-label">Optimal Health</div>
                   <div className="metric-value">{summary.lowRiskCount}</div>
                 </div>
                 <span className="metric-icon"><i className="bi bi-check-circle"></i></span>
@@ -175,7 +167,7 @@ export default function DashboardPage() {
               {showingAllVehicles ? 'Fleet Operational Roster' : 'Registered Vehicles'}
             </span>
             <div className="d-flex gap-2">
-              <Link to="/vehicles" className="btn btn-sm btn-outline-dark">
+              <Link to="/vehicles" className="btn btn-sm btn-outline-secondary">
                 <i className="bi bi-grid me-1"></i>Garage View
               </Link>
             </div>
@@ -198,8 +190,8 @@ export default function DashboardPage() {
                 {vehicles.length > 0 ? (
                   vehicles.map((v) => (
                     <tr key={v.id}>
-                      <td className="fw-bold text-dark">
-                        <Link to={`/vehicles/${v.id}`} className="text-decoration-none text-dark">
+                      <td className="fw-bold">
+                        <Link to={`/vehicles/${v.id}`} className="text-decoration-none">
                           {v.name}
                         </Link>
                       </td>
@@ -219,8 +211,8 @@ export default function DashboardPage() {
                         )}
                       </td>
                       <td className="text-end">
-                        <Link to={`/vehicles/${v.id}`} className="btn btn-sm btn-dark">
-                          <i className="bi bi-cpu me-1"></i>HUD Station
+                        <Link to={`/vehicles/${v.id}`} className="btn btn-sm btn-hero-cta">
+                          <i className="bi bi-cpu me-1"></i>HUD
                         </Link>
                       </td>
                     </tr>
@@ -229,11 +221,11 @@ export default function DashboardPage() {
                   <tr>
                     <td colSpan="7" className="text-center py-5">
                       <div className="empty-state">
-                        <i className="bi bi-truck"></i>
+                        <i className="bi bi-truck fs-1 text-muted mb-2"></i>
                         <h6 className="fw-bold">No vehicles registered yet</h6>
-                        <p className="text-muted small">Register your first vehicle to start tracking telemetry streams.</p>
-                        <Link to="/vehicles/new" className="btn btn-dark btn-sm">
-                          <i className="bi bi-plus-circle me-1"></i>Add Vehicle
+                        <p className="text-muted small">Add your first vehicle to start telemetry ingestion.</p>
+                        <Link to="/vehicles/new" className="btn btn-hero-cta btn-sm mt-2">
+                          <i className="bi bi-plus-lg me-1"></i>Add Vehicle
                         </Link>
                       </div>
                     </td>

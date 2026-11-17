@@ -111,14 +111,16 @@ CREATE TABLE IF NOT EXISTS maintenance_records (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ==============================================================================
--- Initial Seed Data (Only inserted if tables are empty)
--- Passwords are hashed for 'Password@1234'
+-- Initial Seed Data
+-- Passwords are real verified BCrypt hashes for 'Password@1234'
 -- ==============================================================================
 
-INSERT IGNORE INTO users (id, name, email, password, role) VALUES
-(1, 'Admin Overseer', 'admin@autoguard.ai', '$2a$10$7Z2P.xNqI2Z4a7vK5b6k.uJtQ5A7n1M9p3Q2E5R8T1Y4U7I0O2P3S', 'ADMIN'),
-(2, 'Chief Fleet Engineer', 'engineer@autoguard.ai', '$2a$10$7Z2P.xNqI2Z4a7vK5b6k.uJtQ5A7n1M9p3Q2E5R8T1Y4U7I0O2P3S', 'ENGINEER'),
-(3, 'Alex Mercer (Owner)', 'driver@autoguard.ai', '$2a$10$7Z2P.xNqI2Z4a7vK5b6k.uJtQ5A7n1M9p3Q2E5R8T1Y4U7I0O2P3S', 'OWNER');
+INSERT INTO users (name, email, password, role) VALUES
+('Admin Overseer', 'admin@autoguard.ai', '$2a$10$ZiYfM47AMqJNlX2Okiyaj.MrYISRpxsSBzMy/166auiNwsqseXvne', 'ADMIN'),
+('Admin User', 'admin@autoguard.com', '$2a$10$ZiYfM47AMqJNlX2Okiyaj.MrYISRpxsSBzMy/166auiNwsqseXvne', 'ADMIN'),
+('Chief Fleet Engineer', 'engineer@autoguard.ai', '$2a$10$ZiYfM47AMqJNlX2Okiyaj.MrYISRpxsSBzMy/166auiNwsqseXvne', 'ENGINEER'),
+('Alex Mercer (Owner)', 'driver@autoguard.ai', '$2a$10$ZiYfM47AMqJNlX2Okiyaj.MrYISRpxsSBzMy/166auiNwsqseXvne', 'OWNER')
+ON DUPLICATE KEY UPDATE password = VALUES(password), role = VALUES(role);
 
 INSERT IGNORE INTO knowledge_articles (id, title, category, content) VALUES
 (1, 'Engine Overheating & Coolant Loop Failure', 'Cooling System', 'Standard operational temperature for modern combustion and hybrid engines ranges between 82°C and 95°C. Sustained telemetry exceeding 100°C indicates reduced coolant flow, thermostat valve lock, or radiator fan failure. Immediate action: Inspect coolant expansion tank level, pressure test radiator cap, and verify electrical continuity to the cooling fan relay (DTC P0217, P0128).'),

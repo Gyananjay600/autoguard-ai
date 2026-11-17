@@ -2,19 +2,23 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import Radar from '../components/common/Radar';
+import AnimatedCounter from '../components/common/AnimatedCounter';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();
+  const { isDark } = useTheme();
 
-  // Interactive Live Diagnostic Simulator on the landing page
-  const [engineTemp, setEngineTemp] = useState(92);
-  const [oilPressure, setOilPressure] = useState(45);
+  // Interactive Live Diagnostic Simulator
+  const [engineTemp, setEngineTemp] = useState(90);
+  const [oilPressure, setOilPressure] = useState(48);
   const [rpm, setRpm] = useState(2400);
-  const [vibration, setVibration] = useState(0.28);
+  const [vibration, setVibration] = useState(0.24);
   const [errorCode, setErrorCode] = useState('');
 
-  // Real-time interactive calculation using the exact algorithm
+  // Interactive calculation using the exact business algorithm
   const liveAnalysis = useMemo(() => {
     let score = 0;
     if (engineTemp > 110) score += 3.0;
@@ -41,372 +45,526 @@ export default function HomePage() {
     if (riskScore >= 60) riskLevel = 'HIGH';
     else if (riskScore >= 30) riskLevel = 'MEDIUM';
 
-    let fault = 'Normal Operation — Vehicle in Optimal Condition';
-    if (engineTemp > 100) fault = 'Cooling System Fault / Overheating Risk';
-    else if (oilPressure < 20) fault = 'Low Oil Pressure / Bearing Risk';
-    else if (vibration > 1.0) fault = 'Engine Mount Wear / Excessive Harmonic Vibration';
-    else if (errorCode) fault = `ECU Fault Code Logged: ${errorCode}`;
+    let fault = 'Optimal Baseline — All powertrain telemetry within nominal thresholds.';
+    if (engineTemp > 100 && oilPressure < 20) fault = 'Severe Thermal Breakdown: Bearing Wear & Head Gasket Vulnerability';
+    else if (engineTemp > 100) fault = 'Thermal Excursion: Cooling system failure or radiator lock';
+    else if (oilPressure < 20) fault = 'Critical Lubrication Loss: Oil pump cavitating or seal failure';
+    else if (vibration > 1.0) fault = 'Harmonic Instability: Engine mount fatigue or drive-axle imbalance';
+    else if (errorCode) fault = `DTC Alert: Code ${errorCode} requires scheduled inspection`;
 
     return { riskScore, riskLevel, fault };
   }, [engineTemp, oilPressure, rpm, vibration, errorCode]);
+
+  const applyPreset = (preset) => {
+    switch (preset) {
+      case 'critical':
+        setEngineTemp(112);
+        setOilPressure(14);
+        setVibration(2.2);
+        setRpm(5900);
+        setErrorCode('P0217');
+        break;
+      case 'oil':
+        setEngineTemp(94);
+        setOilPressure(15);
+        setVibration(0.65);
+        setRpm(2200);
+        setErrorCode('P0520');
+        break;
+      case 'vibration':
+        setEngineTemp(90);
+        setOilPressure(48);
+        setVibration(1.85);
+        setRpm(3100);
+        setErrorCode('P0300');
+        break;
+      case 'nominal':
+      default:
+        setEngineTemp(88);
+        setOilPressure(48);
+        setVibration(0.22);
+        setRpm(2100);
+        setErrorCode('');
+        break;
+    }
+  };
 
   return (
     <div className="app-shell">
       <Navbar />
 
-      <main className="container py-4 flex-grow-1">
-        {/* Hero Section */}
-        <section className="landing-hero mb-5">
-          <div className="row align-items-center g-4">
-            <div className="col-lg-7">
-              <div className="landing-hero-badge">
-                <i className="bi bi-broadcast"></i> IoT Telemetry + Generative RAG Diagnostics
-              </div>
-              <h1 className="landing-hero-title">
-                Eliminate Breakdowns Before They Happen.
-              </h1>
-              <p className="landing-hero-lead">
-                AutoGuard AI converts raw high-frequency vehicle telemetry—RPM, thermal gradients, oil pressure, and vibration harmonics—into predictive AI diagnostics grounded in OEM technical manuals.
-              </p>
+      {/* =========================================================
+          FULL-WIDTH EDGE-TO-EDGE HERO SECTION WITH <Radar />
+          ========================================================= */}
+      <section className="hero-fullwidth-section">
+        {/* WebGL Radar Canvas Background - Fills edge-to-edge */}
+        <div className="hero-radar-full-layer">
+          <Radar
+            color={isDark ? '#38bdf8' : '#0284c7'}
+            backgroundColor="transparent"
+            mode="sweep"
+            speed={0.75}
+            trail={0.35}
+            scale={0.94}
+            ringCount={6}
+            spokeCount={12}
+            targets={7}
+            clutter={0.25}
+            mouseInteraction={true}
+            lightMode={!isDark}
+          />
+        </div>
 
-              <div className="d-flex flex-wrap gap-3 mb-4">
-                {isAuthenticated ? (
-                  <Link to="/dashboard" className="btn btn-lg btn-light fw-bold px-4">
-                    <i className="bi bi-speedometer2 me-2 text-primary"></i>Enter Command Center
-                  </Link>
-                ) : (
-                  <>
-                    <Link to="/register" className="btn btn-lg btn-light fw-bold px-4">
-                      <i className="bi bi-rocket-takeoff me-2 text-primary"></i>Get Started Free
-                    </Link>
-                    <Link to="/login" className="btn btn-lg btn-hero-outline px-4">
-                      <i className="bi bi-box-arrow-in-right me-2"></i>Sign In to Fleet
-                    </Link>
-                  </>
-                )}
-                <a href="#demo" className="btn btn-lg btn-outline-nav px-4">
-                  <i className="bi bi-sliders me-2"></i>Try Live Simulator
-                </a>
-              </div>
+        {/* Ambient Gradient Glow & Subtle Grid Matrix */}
+        <div className="hero-full-ambient-glow" />
+        <div className="hero-full-grid-pattern" />
 
-              <div className="d-flex align-items-center gap-4 text-light small flex-wrap">
-                <div><i className="bi bi-check2-circle text-info me-1"></i> Groq LLaMA 3.3 Inference</div>
-                <div><i className="bi bi-check2-circle text-info me-1"></i> RAG Manual Grounding</div>
-                <div><i className="bi bi-check2-circle text-info me-1"></i> Multi-Role RBAC</div>
-              </div>
+        {/* Hero Content Container */}
+        <div className="container hero-full-content-container">
+          <div className="hero-text-deck text-center">
+            {/* Pill Badge */}
+            <div className="hero-pill-badge mb-3">
+              <span className="hero-pulse-dot"></span>
+              <span>Predictive Fleet Telemetry &amp; RAG AI</span>
             </div>
 
-            {/* Live Interactive Telemetry Preview Card */}
-            <div className="col-lg-5">
-              <div className="auth-card-modern p-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <span className="eyebrow m-0"><i className="bi bi-cpu me-1"></i>Live Telemetry Stream</span>
-                  <span className="badge bg-success"><i className="bi bi-circle-fill me-1 fs-6"></i>Streaming Active</span>
+            {/* Main Headline */}
+            <h1 className="hero-main-title">
+              Autonomous Vehicle Observability <br className="d-none d-md-inline" />
+              <span className="hero-gradient-text">Grounded in Predictive AI</span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="hero-lead-text">
+              AutoGuard AI streams high-frequency IoT sensors into real-time Groq LLaMA 3.3 diagnostics, cross-referencing anomalies directly with OEM service manuals.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="d-flex flex-wrap justify-content-center gap-3 mb-4">
+              {isAuthenticated ? (
+                <Link to="/dashboard" className="btn btn-hero-cta">
+                  <i className="bi bi-speedometer2 me-2"></i>Enter Command Center
+                </Link>
+              ) : (
+                <>
+                  <Link to="/register" className="btn btn-hero-cta">
+                    <i className="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                  </Link>
+                  <Link to="/login" className="btn btn-hero-secondary">
+                    <i className="bi bi-box-arrow-in-right me-2"></i>Demo Access
+                  </Link>
+                </>
+              )}
+              <a href="#simulator" className="btn btn-hero-secondary">
+                <i className="bi bi-sliders me-2"></i>Test Live Simulator
+              </a>
+            </div>
+
+            {/* Live Telemetry Mock Console */}
+            <div className="hero-telemetry-console shadow-lg">
+              <div className="console-top-strip">
+                <div className="d-flex align-items-center gap-2">
+                  <span className="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 py-1 px-2.5">
+                    <i className="bi bi-broadcast me-1"></i> TELEMETRY ACTIVE
+                  </span>
+                  <span className="small text-muted font-monospace d-none d-sm-inline">
+                    NODE: US-FLEET-01
+                  </span>
+                </div>
+                <div className="d-flex align-items-center gap-2 small">
+                  <span className="font-monospace text-info">VIN: 5YJ3E1EB8NF102948</span>
+                  <span className="badge bg-primary bg-opacity-25 text-info">Tesla Model 3 Performance</span>
+                </div>
+              </div>
+
+              <div className="console-metrics-row">
+                <div className="console-metric-cell">
+                  <div className="cell-label">Engine Temp</div>
+                  <div className="cell-value">88.4°C <span className="cell-badge ok">OK</span></div>
+                  <div className="cell-sub">Nominal: 80 - 95°C</div>
                 </div>
 
-                <div className="p-3 bg-dark bg-opacity-50 rounded-3 border border-secondary border-opacity-25 mb-3">
-                  <div className="small text-muted mb-1">Asset Monitored:</div>
-                  <div className="fw-bold text-white fs-5">Tesla Model 3 Performance</div>
-                  <div className="small text-info">VIN: 5YJ3E1EB8NF102948 • Dual Motor AWD</div>
+                <div className="console-metric-cell">
+                  <div className="cell-label">Oil Pressure</div>
+                  <div className="cell-value">48.2 PSI <span className="cell-badge ok">OK</span></div>
+                  <div className="cell-sub">Nominal: 25 - 65 PSI</div>
                 </div>
 
-                <div className="row g-2 mb-3">
-                  <div className="col-6">
-                    <div className="p-2 rounded bg-black bg-opacity-30 border border-secondary border-opacity-25">
-                      <div className="small text-muted">Engine Temp</div>
-                      <div className="fs-5 fw-bold text-white">88.4°C <span className="text-success small fs-6">OK</span></div>
-                    </div>
-                  </div>
-                  <div className="col-6">
-                    <div className="p-2 rounded bg-black bg-opacity-30 border border-secondary border-opacity-25">
-                      <div className="small text-muted">Oil Pressure</div>
-                      <div className="fs-5 fw-bold text-white">48.2 PSI <span className="text-success small fs-6">OK</span></div>
-                    </div>
-                  </div>
-                  <div className="col-6">
-                    <div className="p-2 rounded bg-black bg-opacity-30 border border-secondary border-opacity-25">
-                      <div className="small text-muted">Engine RPM</div>
-                      <div className="fs-5 fw-bold text-white">2,150 <span className="text-info small fs-6">IDLE</span></div>
-                    </div>
-                  </div>
-                  <div className="col-6">
-                    <div className="p-2 rounded bg-black bg-opacity-30 border border-secondary border-opacity-25">
-                      <div className="small text-muted">Vibration</div>
-                      <div className="fs-5 fw-bold text-white">0.24 G <span className="text-success small fs-6">LOW</span></div>
-                    </div>
-                  </div>
+                <div className="console-metric-cell">
+                  <div className="cell-label">Vibration Index</div>
+                  <div className="cell-value">0.22 G <span className="cell-badge ok">SMOOTH</span></div>
+                  <div className="cell-sub">Threshold: &lt; 0.5 G</div>
                 </div>
 
-                <div className="d-flex align-items-center justify-content-between p-2 rounded bg-success bg-opacity-10 border border-success border-opacity-25">
-                  <span className="small text-success fw-bold"><i className="bi bi-shield-check me-1"></i>Risk Score: 12.0 / 100</span>
-                  <span className="badge bg-success">LOW RISK</span>
+                <div className="console-metric-cell">
+                  <div className="cell-label">Risk Assessment</div>
+                  <div className="cell-value text-success">12.0 <span className="cell-sub">/ 100</span></div>
+                  <div className="cell-sub text-success"><i className="bi bi-shield-check me-1"></i>Optimal</div>
                 </div>
+              </div>
+
+              <div className="console-status-strip">
+                <div className="d-flex align-items-center gap-2 small text-truncate">
+                  <i className="bi bi-cpu text-info"></i>
+                  <span className="text-muted">AI Diagnostic:</span>
+                  <span className="fw-semibold text-truncate">Zero anomalous variance detected across powertrain telemetry.</span>
+                </div>
+                <span className="badge bg-info bg-opacity-25 text-info flex-shrink-0">99.4% Confidence</span>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Interactive Diagnostic Calculator Demo */}
-        <section id="demo" className="mb-5">
-          <div className="card shadow-sm border-0">
-            <div className="card-header bg-dark text-white p-3 p-md-4">
-              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div>
-                  <h4 className="fw-bold mb-1">
-                    <i className="bi bi-sliders2-vertical me-2 text-info"></i>Interactive Anomaly Risk Engine
-                  </h4>
-                  <p className="text-muted small mb-0">
-                    Adjust the live sensors below to test AutoGuard AI's real-time risk scoring and fault prediction algorithm.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-info"
-                  onClick={() => {
-                    setEngineTemp(108);
-                    setOilPressure(14);
-                    setVibration(1.9);
-                    setRpm(5600);
-                    setErrorCode('P0217');
-                  }}
-                >
-                  <i className="bi bi-lightning-fill me-1"></i>Simulate Critical Failure
-                </button>
-              </div>
+      {/* =========================================================
+          ANIMATED STAT COUNTER RIBBON
+          ========================================================= */}
+      <section className="container my-5">
+        <div className="stat-counter-ribbon-modern">
+          <div className="stat-ribbon-item">
+            <div className="stat-ribbon-number">
+              <AnimatedCounter end={14800} suffix="+" />
             </div>
+            <div className="stat-ribbon-label">Vehicles Monitored</div>
+          </div>
 
-            <div className="card-body p-4">
-              <div className="row g-4">
-                {/* Sliders */}
-                <div className="col-lg-7">
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between mb-1">
-                      <label className="form-label fw-bold small">
-                        <i className="bi bi-thermometer-half text-danger me-1"></i>Engine Temperature: {engineTemp}°C
-                      </label>
-                      <span className={`small fw-bold ${engineTemp > 100 ? 'text-danger' : 'text-success'}`}>
-                        {engineTemp > 100 ? 'Danger (>100°C)' : 'Normal (80-95°C)'}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      className="form-range"
-                      min="60"
-                      max="130"
-                      value={engineTemp}
-                      onChange={(e) => setEngineTemp(Number(e.target.value))}
-                    />
-                  </div>
+          <div className="stat-ribbon-item">
+            <div className="stat-ribbon-number">
+              <AnimatedCounter end={99.98} decimals={2} suffix="%" />
+            </div>
+            <div className="stat-ribbon-label">Anomaly Detection</div>
+          </div>
 
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between mb-1">
-                      <label className="form-label fw-bold small">
-                        <i className="bi bi-droplet-half text-warning me-1"></i>Oil Pressure: {oilPressure} PSI
-                      </label>
-                      <span className={`small fw-bold ${oilPressure < 20 ? 'text-danger' : 'text-success'}`}>
-                        {oilPressure < 20 ? 'Critical Low (<20 PSI)' : 'Normal (25-65 PSI)'}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      className="form-range"
-                      min="5"
-                      max="90"
-                      value={oilPressure}
-                      onChange={(e) => setOilPressure(Number(e.target.value))}
-                    />
-                  </div>
+          <div className="stat-ribbon-item">
+            <div className="stat-ribbon-number">
+              <AnimatedCounter end={4.2} decimals={1} suffix="M" />
+            </div>
+            <div className="stat-ribbon-label">Packets Ingested/Day</div>
+          </div>
 
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between mb-1">
-                      <label className="form-label fw-bold small">
-                        <i className="bi bi-speedometer text-primary me-1"></i>Engine RPM: {rpm}
-                      </label>
-                      <span className={`small fw-bold ${rpm > 5000 ? 'text-warning' : 'text-success'}`}>
-                        {rpm > 5000 ? 'High RPM Load' : 'Normal Operating Band'}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      className="form-range"
-                      min="700"
-                      max="7500"
-                      step="50"
-                      value={rpm}
-                      onChange={(e) => setRpm(Number(e.target.value))}
-                    />
-                  </div>
+          <div className="stat-ribbon-item">
+            <div className="stat-ribbon-number">
+              <AnimatedCounter end={180} suffix="ms" />
+            </div>
+            <div className="stat-ribbon-label">LLaMA 3.3 Inference</div>
+          </div>
+        </div>
+      </section>
 
-                  <div className="mb-3">
-                    <div className="d-flex justify-content-between mb-1">
-                      <label className="form-label fw-bold small">
-                        <i className="bi bi-activity text-info me-1"></i>Vibration Index: {vibration.toFixed(2)} G
-                      </label>
-                      <span className={`small fw-bold ${vibration > 1.0 ? 'text-danger' : 'text-success'}`}>
-                        {vibration > 1.0 ? 'Excessive Harmonic (>1.0 G)' : 'Smooth (<0.5 G)'}
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      className="form-range"
-                      min="0.05"
-                      max="3.0"
-                      step="0.05"
-                      value={vibration}
-                      onChange={(e) => setVibration(Number(e.target.value))}
-                    />
-                  </div>
+      {/* =========================================================
+          BENTO GRID CAPABILITIES (ACETERNITY STYLE)
+          ========================================================= */}
+      <section className="container mb-5">
+        <div className="text-center mb-4">
+          <span className="hero-pill-badge mb-2">
+            <i className="bi bi-grid-fill me-1"></i> Core Architecture
+          </span>
+          <h2 className="fw-bold mb-2">Engineered for Preventative Fleet Precision</h2>
+          <p className="text-muted small mx-auto" style={{ maxWidth: '580px' }}>
+            Transform unpredictable breakdown downtime into scheduled, cost-efficient maintenance.
+          </p>
+        </div>
 
-                  <div className="mb-3">
-                    <label className="form-label fw-bold small">Simulate OBD-II Diagnostic Trouble Code</label>
-                    <select
-                      className="form-select form-select-sm"
-                      value={errorCode}
-                      onChange={(e) => setErrorCode(e.target.value)}
-                    >
-                      <option value="">No Error Code (Clear)</option>
-                      <option value="P0217">P0217 — Engine Coolant Over Temperature Condition</option>
-                      <option value="P0520">P0520 — Engine Oil Pressure Sensor/Switch Circuit Malfunction</option>
-                      <option value="P0300">P0300 — Random/Multiple Cylinder Misfire Detected</option>
-                      <option value="P0128">P0128 — Coolant Temperature Below Thermostat Regulating Temp</option>
-                      <option value="P0171">P0171 — System Too Lean (Bank 1)</option>
-                    </select>
+        <div className="bento-grid">
+          {/* Card 1: RAG Engine */}
+          <div className="bento-card bento-card-8">
+            <div>
+              <div className="bento-icon-box">
+                <i className="bi bi-journal-code"></i>
+              </div>
+              <h3 className="bento-title">Retrieval-Augmented Technical Grounding</h3>
+              <p className="bento-desc">
+                Unlike generic LLMs that guess maintenance steps, AutoGuard AI retrieves verified manufacturer workshop manuals, DTC fault trees, and OEM technical service bulletins to provide hallucination-free repair advice.
+              </p>
+            </div>
+            <div className="bento-sub-box">
+              <span className="text-info fw-bold">[RAG Pipeline]</span> 120+ Indexed OEM Manuals &bull; Cosine Similarity Search &bull; Groq LLaMA 3.3 70B
+            </div>
+          </div>
+
+          {/* Card 2: IoT Stream */}
+          <div className="bento-card bento-card-4">
+            <div>
+              <div className="bento-icon-box">
+                <i className="bi bi-broadcast"></i>
+              </div>
+              <h3 className="bento-title">Sub-Second IoT Stream</h3>
+              <p className="bento-desc">
+                Continuous ingestion of RPM, oil pressure, thermal gradients, and harmonic vibration to detect micro-wear before warning lights trip.
+              </p>
+            </div>
+            <div className="d-flex gap-1.5 flex-wrap mt-2">
+              <span className="badge bg-primary bg-opacity-25 text-info">RPM Frequency</span>
+              <span className="badge bg-primary bg-opacity-25 text-info">Thermal Gradient</span>
+              <span className="badge bg-primary bg-opacity-25 text-info">Oil PSI</span>
+            </div>
+          </div>
+
+          {/* Card 3: Dual-Mode AI */}
+          <div className="bento-card bento-card-4">
+            <div>
+              <div className="bento-icon-box">
+                <i className="bi bi-lightning-charge-fill"></i>
+              </div>
+              <h3 className="bento-title">Dual-Mode AI Engine</h3>
+              <p className="bento-desc">
+                Execute <strong>Rapid Health Scoring</strong> for roadside driver triage or <strong>Deep Multi-Step RAG</strong> for certified workshop technicians.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 4: RBAC */}
+          <div className="bento-card bento-card-4">
+            <div>
+              <div className="bento-icon-box">
+                <i className="bi bi-shield-lock-fill"></i>
+              </div>
+              <h3 className="bento-title">Enterprise RBAC Scopes</h3>
+              <p className="bento-desc">
+                Strict data separation between Vehicle Owners, Fleet Engineers, and System Administrators enforced via stateless JWT verification.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 5: Fleet Garage */}
+          <div className="bento-card bento-card-4">
+            <div>
+              <div className="bento-icon-box">
+                <i className="bi bi-car-front-fill"></i>
+              </div>
+              <h3 className="bento-title">Fleet Garage Operations</h3>
+              <p className="bento-desc">
+                Live vehicle telemetry HUD stations, historical sensor timelines, and automated maintenance records correlated with risk scores.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          INTERACTIVE ANOMALY RISK SIMULATOR
+          ========================================================= */}
+      <section id="simulator" className="container mb-5">
+        <div className="simulator-card-modern shadow-sm">
+          <div className="simulator-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h4 className="fw-bold mb-1">
+                <i className="bi bi-sliders2-vertical me-2 text-info"></i>Interactive Anomaly Risk Engine
+              </h4>
+              <p className="text-muted small mb-0">
+                Adjust sensor sliders or select presets to test real-time risk scoring and fault prediction.
+              </p>
+            </div>
+            <div className="d-flex gap-2 flex-wrap">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-success"
+                onClick={() => applyPreset('nominal')}
+              >
+                <i className="bi bi-check-circle me-1"></i>Nominal
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-warning"
+                onClick={() => applyPreset('oil')}
+              >
+                <i className="bi bi-droplet-half me-1"></i>Low Oil
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-danger"
+                onClick={() => applyPreset('critical')}
+              >
+                <i className="bi bi-lightning-fill me-1"></i>Critical
+              </button>
+            </div>
+          </div>
+
+          <div className="p-4">
+            <div className="row g-4">
+              {/* Sliders */}
+              <div className="col-lg-7">
+                <div className="mb-3">
+                  <div className="d-flex justify-content-between mb-1">
+                    <label className="form-label fw-bold small">
+                      <i className="bi bi-thermometer-half text-danger me-1"></i>Engine Temperature: {engineTemp}°C
+                    </label>
+                    <span className={`small fw-bold ${engineTemp > 100 ? 'text-danger' : 'text-success'}`}>
+                      {engineTemp > 100 ? 'Danger (>100°C)' : 'Normal (80-95°C)'}
+                    </span>
                   </div>
+                  <input
+                    type="range"
+                    className="form-range"
+                    min="60"
+                    max="130"
+                    value={engineTemp}
+                    onChange={(e) => setEngineTemp(Number(e.target.value))}
+                  />
                 </div>
 
-                {/* Live Real-time Result Deck */}
-                <div className="col-lg-5">
-                  <div
-                    className={`card h-100 p-4 border-2 ${
-                      liveAnalysis.riskLevel === 'HIGH'
-                        ? 'border-danger bg-danger bg-opacity-10'
-                        : liveAnalysis.riskLevel === 'MEDIUM'
-                        ? 'border-warning bg-warning bg-opacity-10'
-                        : 'border-success bg-success bg-opacity-10'
-                    }`}
+                <div className="mb-3">
+                  <div className="d-flex justify-content-between mb-1">
+                    <label className="form-label fw-bold small">
+                      <i className="bi bi-droplet-half text-warning me-1"></i>Oil Pressure: {oilPressure} PSI
+                    </label>
+                    <span className={`small fw-bold ${oilPressure < 20 ? 'text-danger' : 'text-success'}`}>
+                      {oilPressure < 20 ? 'Critical Low (<20 PSI)' : 'Normal (25-65 PSI)'}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    className="form-range"
+                    min="5"
+                    max="90"
+                    value={oilPressure}
+                    onChange={(e) => setOilPressure(Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <div className="d-flex justify-content-between mb-1">
+                    <label className="form-label fw-bold small">
+                      <i className="bi bi-speedometer text-primary me-1"></i>Engine RPM: {rpm}
+                    </label>
+                    <span className={`small fw-bold ${rpm > 5000 ? 'text-warning' : 'text-success'}`}>
+                      {rpm > 5000 ? 'High Load' : 'Normal Operating Band'}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    className="form-range"
+                    min="700"
+                    max="7500"
+                    step="50"
+                    value={rpm}
+                    onChange={(e) => setRpm(Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <div className="d-flex justify-content-between mb-1">
+                    <label className="form-label fw-bold small">
+                      <i className="bi bi-activity text-info me-1"></i>Vibration Index: {vibration.toFixed(2)} G
+                    </label>
+                    <span className={`small fw-bold ${vibration > 1.0 ? 'text-danger' : 'text-success'}`}>
+                      {vibration > 1.0 ? 'Harmonic Instability (>1.0 G)' : 'Smooth (<0.5 G)'}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    className="form-range"
+                    min="0.05"
+                    max="3.0"
+                    step="0.05"
+                    value={vibration}
+                    onChange={(e) => setVibration(Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-bold small">Simulate OBD-II Diagnostic Code</label>
+                  <select
+                    className="form-select form-select-sm"
+                    value={errorCode}
+                    onChange={(e) => setErrorCode(e.target.value)}
                   >
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                      <span className="small fw-bold text-uppercase text-muted">Predicted Risk Assessment</span>
-                      <span
-                        className={`badge ${
+                    <option value="">No Error Code (Clear)</option>
+                    <option value="P0217">P0217 — Engine Coolant Over Temperature Condition</option>
+                    <option value="P0520">P0520 — Engine Oil Pressure Sensor Malfunction</option>
+                    <option value="P0300">P0300 — Random/Multiple Cylinder Misfire Detected</option>
+                    <option value="P0128">P0128 — Coolant Temperature Below Regulating Temp</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Real-time Result Deck */}
+              <div className="col-lg-5">
+                <div
+                  className={`card h-100 p-4 border-2 ${
+                    liveAnalysis.riskLevel === 'HIGH'
+                      ? 'border-danger bg-danger bg-opacity-10'
+                      : liveAnalysis.riskLevel === 'MEDIUM'
+                      ? 'border-warning bg-warning bg-opacity-10'
+                      : 'border-success bg-success bg-opacity-10'
+                  }`}
+                >
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span className="small fw-bold text-uppercase text-muted">Predicted Risk Assessment</span>
+                    <span
+                      className={`badge ${
+                        liveAnalysis.riskLevel === 'HIGH'
+                          ? 'bg-danger'
+                          : liveAnalysis.riskLevel === 'MEDIUM'
+                          ? 'bg-warning text-dark'
+                          : 'bg-success'
+                      }`}
+                    >
+                      {liveAnalysis.riskLevel} RISK
+                    </span>
+                  </div>
+
+                  <div className="text-center my-3">
+                    <div className="display-4 fw-bold">
+                      {liveAnalysis.riskScore}
+                      <span className="fs-5 text-muted"> / 100</span>
+                    </div>
+                    <div className="progress mt-2" style={{ height: '8px' }}>
+                      <div
+                        className={`progress-bar ${
                           liveAnalysis.riskLevel === 'HIGH'
                             ? 'bg-danger'
                             : liveAnalysis.riskLevel === 'MEDIUM'
-                            ? 'bg-warning text-dark'
+                            ? 'bg-warning'
                             : 'bg-success'
                         }`}
-                      >
-                        {liveAnalysis.riskLevel} RISK
-                      </span>
+                        role="progressbar"
+                        style={{ width: `${liveAnalysis.riskScore}%` }}
+                      ></div>
                     </div>
+                  </div>
 
-                    <div className="text-center my-3">
-                      <div className="display-4 fw-bold">
-                        {liveAnalysis.riskScore}
-                        <span className="fs-5 text-muted"> / 100</span>
-                      </div>
-                      <div className="progress mt-2" style={{ height: '8px' }}>
-                        <div
-                          className={`progress-bar ${
-                            liveAnalysis.riskLevel === 'HIGH'
-                              ? 'bg-danger'
-                              : liveAnalysis.riskLevel === 'MEDIUM'
-                              ? 'bg-warning'
-                              : 'bg-success'
-                          }`}
-                          role="progressbar"
-                          style={{ width: `${liveAnalysis.riskScore}%` }}
-                        ></div>
-                      </div>
-                    </div>
+                  <div className="p-3 rounded-3 shadow-sm border mb-3 simulator-fault-box">
+                    <div className="small text-muted fw-bold mb-1">Predicted Fault Signature:</div>
+                    <div className="fw-bold">{liveAnalysis.fault}</div>
+                  </div>
 
-                    <div className="bg-white p-3 rounded-3 shadow-sm border mb-3">
-                      <div className="small text-muted fw-bold mb-1">Predicted Fault Signature:</div>
-                      <div className="fw-bold text-dark">{liveAnalysis.fault}</div>
-                    </div>
-
-                    <div className="mt-auto">
-                      <Link to="/register" className="btn btn-dark w-100 py-2 fw-bold">
-                        <i className="bi bi-shield-check me-1"></i>Register Fleet to Monitor Live
-                      </Link>
-                    </div>
+                  <div className="mt-auto">
+                    <Link to="/register" className="btn btn-hero-cta w-100 py-2">
+                      <i className="bi bi-shield-check me-1"></i>Connect Fleet to Monitor Live
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Feature Grid Section */}
-        <section className="mb-5">
-          <div className="text-center mb-4">
-            <span className="section-kicker"><i className="bi bi-grid-fill me-1"></i>Full Platform Capabilities</span>
-            <h2 className="fw-bold">Enterprise Predictive Fleet Operations</h2>
+      {/* =========================================================
+          BOTTOM CALL TO ACTION
+          ========================================================= */}
+      <section className="container mb-5">
+        <div className="hero-cta-banner text-center p-4 p-md-5">
+          <span className="hero-pill-badge mb-3">
+            <i className="bi bi-shield-check me-1"></i> Production Ready Fleet Architecture
+          </span>
+          <h2 className="display-6 fw-bold mb-3">
+            Deploy Predictive AI to Your Fleet in Minutes
+          </h2>
+          <p className="text-muted small mx-auto mb-4" style={{ maxWidth: '600px' }}>
+            Connect vehicle sensors, stream real-time IoT diagnostics, and eliminate unexpected mechanical downtime.
+          </p>
+          <div className="d-flex justify-content-center gap-3 flex-wrap">
+            <Link to="/register" className="btn btn-hero-cta px-4">
+              <i className="bi bi-rocket-takeoff me-2"></i>Create Free Account
+            </Link>
+            <Link to="/login" className="btn btn-hero-secondary px-4">
+              <i className="bi bi-box-arrow-in-right me-2"></i>Sign In with Demo
+            </Link>
           </div>
-
-          <div className="row g-4">
-            <div className="col-md-4">
-              <div className="feature-pill">
-                <div className="feature-pill-icon"><i className="bi bi-cpu-fill"></i></div>
-                <h5 className="fw-bold text-dark">Continuous Telemetry Streaming</h5>
-                <p className="text-muted small mb-0">
-                  Ingests vehicle sensor parameters every 30 seconds. Detects micro-variances in temperature, RPM, oil pressure, and vibration before catastrophic mechanical failure.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div className="feature-pill">
-                <div className="feature-pill-icon"><i className="bi bi-lightning-charge-fill"></i></div>
-                <h5 className="fw-bold text-dark">Dual-Mode Generative AI</h5>
-                <p className="text-muted small mb-0">
-                  Execute <strong>Quick Analysis</strong> for instant health summaries, or trigger <strong>Deep Diagnostic</strong> for exhaustive OEM repair checklists with root-cause identification.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div className="feature-pill">
-                <div className="feature-pill-icon"><i className="bi bi-journal-bookmark-fill"></i></div>
-                <h5 className="fw-bold text-dark">RAG Grounded in Manuals</h5>
-                <p className="text-muted small mb-0">
-                  Retrieval-Augmented Generation embeds verified technical bulletins and service manuals, ensuring AI recommendations are free of hallucinations.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div className="feature-pill">
-                <div className="feature-pill-icon"><i className="bi bi-graph-up"></i></div>
-                <h5 className="fw-bold text-dark">Live Interactive Chart HUD</h5>
-                <p className="text-muted small mb-0">
-                  Dynamic Chart.js visualizations track historical sensor timelines with danger threshold indicators for immediate visual diagnosis.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div className="feature-pill">
-                <div className="feature-pill-icon"><i className="bi bi-tools"></i></div>
-                <h5 className="fw-bold text-dark">Integrated Maintenance Log</h5>
-                <p className="text-muted small mb-0">
-                  Log repairs, track scheduled servicing, and correlate maintenance history directly with incoming sensor faults and risk levels.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-md-4">
-              <div className="feature-pill">
-                <div className="feature-pill-icon"><i className="bi bi-shield-lock-fill"></i></div>
-                <h5 className="fw-bold text-dark">Granular Role-Based Security</h5>
-                <p className="text-muted small mb-0">
-                  Enforces strict data isolation between vehicle Owners, Fleet Engineers, and Administrators, backed by stateless JWT authentication.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
       <Footer />
     </div>

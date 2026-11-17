@@ -26,11 +26,10 @@ export async function query(sql, params = []) {
 }
 
 /**
- * Auto-initialize database tables and initial seed data if not present
+ * Auto-initialize database tables and seed/sync demo accounts
  */
 export async function initDatabase() {
   try {
-    // Test connectivity
     const connection = await pool.getConnection();
     console.log(`[DB] Connected successfully to MySQL at ${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT || 3306}/${process.env.DB_NAME || 'autoguard_db'}`);
     connection.release();
@@ -154,17 +153,46 @@ export async function initDatabase() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
-    // Check if initial users exist
-    const [userRows] = await pool.query('SELECT COUNT(*) as count FROM users');
-    if (userRows[0].count === 0) {
-      const defaultPasswordHash = await bcrypt.hash('Password@1234', 10);
+    // Demo account synchronization:
+    // Ensures demo accounts always exist with guaranteed Password@1234
+    const defaultPasswordHash = await bcrypt.hash('Password@1234', 10);
+    const demoAccounts = [
+      { name: 'Admin Overseer', email: 'admin@autoguard.ai', role: 'ADMIN' },
+      { name: 'Admin User', email: 'admin@autoguard.com', role: 'ADMIN' },
+      { name: 'Chief Fleet Engineer', email: 'engineer@autoguard.ai', role: 'ENGINEER' },
+      { name: 'Alex Mercer (Owner)', email: 'driver@autoguard.ai', role: 'OWNER' }
+    ];
+
+    for (const acc of demoAccounts) {
+      const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [acc.email]);
+      if (existing.length === 0) {
+        await pool.query(
+          'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+          [acc.name, acc.email, defaultPasswordHash, acc.role]
+        );
+        console.log(`[DB] Created demo user: ${acc.email} (${acc.role})`);
+      } else {
+        // Reset password to ensure Password@1234 works
+        await pool.query(
+          'UPDATE users SET password = ?, role = ? WHERE email = ?',
+          [defaultPasswordHash, acc.role, acc.email]
+        );
+      }
+    }
+
+    // Check if vehicles exist, seed demo fleet if none
+    const [vehRows] = await pool.query('SELECT COUNT(*) as count FROM vehicles');
+    if (vehRows[0].count === 0) {
+      const [ownerRows] = await pool.query("SELECT id FROM users WHERE role = 'OWNER' LIMIT 1");
+      const ownerId = ownerRows[0]?.id || 1;
+
       await pool.query(`
-        INSERT INTO users (id, name, email, password, role) VALUES
-        (1, 'Admin Overseer', 'admin@autoguard.ai', ?, 'ADMIN'),
-        (2, 'Chief Fleet Engineer', 'engineer@autoguard.ai', ?, 'ENGINEER'),
-        (3, 'Alex Mercer (Owner)', 'driver@autoguard.ai', ?, 'OWNER')
-      `, [defaultPasswordHash, defaultPasswordHash, defaultPasswordHash]);
-      console.log('[DB] Seeded initial users (admin@autoguard.ai, engineer@autoguard.ai, driver@autoguard.ai with Password@1234)');
+        INSERT INTO vehicles (name, make, model, year, mileage, engine_type, vin, user_id, created_at) VALUES
+        ('Tesla Model 3 Dual Motor', 'Tesla', 'Model 3 Performance', 2023, 28450, 'Dual Motor Electric AWD', '5YJ3E1EB8NF102948', ?, NOW()),
+        ('Ford F-150 SuperDuty', 'Ford', 'F-150 Lightning', 2024, 14200, 'Dual Motor EV', '1FTFW1ED8NFA99214', ?, NOW()),
+        ('Toyota Camry Hybrid SE', 'Toyota', 'Camry Hybrid', 2022, 62100, '2.5L 4-Cylinder Hybrid', '4T1B11HK5MU082391', ?, NOW())
+      `, [ownerId, ownerId, ownerId]);
+      console.log('[DB] Seeded demo fleet vehicles');
     }
 
     // Check if knowledge articles exist

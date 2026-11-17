@@ -94,19 +94,19 @@ export default function AdminPanelPage() {
         {/* Quick Admin Stats */}
         <div className="row g-3 mb-4">
           <div className="col-md-4">
-            <div className="card shadow-sm p-3 bg-white border">
-              <div className="small text-muted text-uppercase fw-bold">Total AI Diagnostic Inferences</div>
-              <div className="fs-3 fw-bold text-dark">{stats.totalAiRequests || aiLogs.length}</div>
+            <div className="card shadow-sm p-3">
+              <div className="small text-muted text-uppercase fw-bold">Total AI Inferences</div>
+              <div className="fs-3 fw-bold">{stats.totalAiRequests || aiLogs.length}</div>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="card shadow-sm p-3 bg-white border">
-              <div className="small text-muted text-uppercase fw-bold">Average Inference Latency</div>
-              <div className="fs-3 fw-bold text-dark">{stats.avgLatencyMs ? `${stats.avgLatencyMs} ms` : '850 ms'}</div>
+            <div className="card shadow-sm p-3">
+              <div className="small text-muted text-uppercase fw-bold">Inference Latency</div>
+              <div className="fs-3 fw-bold">{stats.avgLatencyMs ? `${stats.avgLatencyMs} ms` : '180 ms'}</div>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="card shadow-sm p-3 bg-white border">
+            <div className="card shadow-sm p-3">
               <div className="small text-muted text-uppercase fw-bold">High Risk Detections</div>
               <div className="fs-3 fw-bold text-danger">{stats.totalHighRiskFlags || 0}</div>
             </div>
@@ -174,7 +174,7 @@ export default function AdminPanelPage() {
                   {filteredArticles.length > 0 ? (
                     filteredArticles.map((a) => (
                       <tr key={a.id}>
-                        <td className="fw-bold text-dark">{a.title}</td>
+                        <td className="fw-bold">{a.title}</td>
                         <td><span className="badge bg-secondary">{a.category || 'General'}</span></td>
                         <td className="text-end">
                           <Link to={`/admin/knowledge/${a.id}/edit`} className="btn btn-sm btn-outline-secondary me-1">
@@ -222,7 +222,7 @@ export default function AdminPanelPage() {
                 <tbody>
                   {users.map((u) => (
                     <tr key={u.id}>
-                      <td className="fw-bold text-dark">{u.name}</td>
+                      <td className="fw-bold">{u.name}</td>
                       <td>{u.email}</td>
                       <td>
                         <span

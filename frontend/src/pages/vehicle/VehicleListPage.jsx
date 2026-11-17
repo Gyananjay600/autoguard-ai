@@ -31,13 +31,13 @@ export default function VehicleListPage() {
   }, []);
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete vehicle "${name}"? All sensor readings and history will be permanently deleted.`)) {
+    if (!window.confirm(`Are you sure you want to delete vehicle "${name}"?`)) {
       return;
     }
 
     try {
       await api.delete(`/vehicles/${id}`);
-      setSuccess(`Vehicle "${name}" deleted successfully.`);
+      setSuccess(`Vehicle "${name}" deleted.`);
       setVehicles((prev) => prev.filter((v) => v.id !== id));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete vehicle.');
@@ -66,7 +66,7 @@ export default function VehicleListPage() {
     return (
       <div className="app-shell">
         <Navbar />
-        <LoadingSpinner fullPage text="Loading Fleet Garage Assets..." />
+        <LoadingSpinner fullPage text="Loading Fleet Assets..." />
         <Footer />
       </div>
     );
@@ -82,37 +82,35 @@ export default function VehicleListPage() {
         {/* Garage Header */}
         <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
           <div>
-            <div className="eyebrow mb-1"><i className="bi bi-grid-3x3-gap-fill me-1"></i>Fleet Assets</div>
-            <h2 className="fw-bold mb-0">Vehicle Garage &amp; Roster</h2>
+            <div className="eyebrow mb-1"><i className="bi bi-car-front-fill me-1"></i>Fleet Assets</div>
+            <h2 className="fw-bold mb-1">Fleet Garage</h2>
             <p className="text-muted small mb-0">
-              Managing {vehicles.length} vehicle{vehicles.length !== 1 ? 's' : ''} with active telemetry telemetry streams.
+              Active telemetry monitoring for {vehicles.length} vehicle{vehicles.length !== 1 ? 's' : ''}.
             </p>
           </div>
           <div className="d-flex gap-2">
-            <Link to="/vehicles/new" className="btn btn-dark">
-              <i className="bi bi-plus-circle me-1.5"></i>Add Vehicle
+            <Link to="/vehicles/new" className="btn btn-hero-cta btn-sm px-3">
+              <i className="bi bi-plus-lg me-1.5"></i>Add Vehicle
             </Link>
           </div>
         </div>
 
         {/* Search, Filter & View Controls */}
-        <div className="card shadow-sm p-3 mb-4 bg-white border">
+        <div className="garage-controls-card p-3 mb-4">
           <div className="row g-2 align-items-center">
             <div className="col-md-5">
               <div className="input-group input-group-sm">
-                <span className="input-group-text bg-light border-end-0">
-                  <i className="bi bi-search text-muted"></i>
-                </span>
+                <span className="input-group-text"><i className="bi bi-search"></i></span>
                 <input
                   type="text"
-                  className="form-control border-start-0"
-                  placeholder="Filter by vehicle name, make, model, or VIN..."
+                  className="form-control"
+                  placeholder="Search by name, make, model or VIN..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {searchTerm && (
                   <button className="btn btn-outline-secondary" onClick={() => setSearchTerm('')}>
-                    <i className="bi bi-x-lg"></i>
+                    <i className="bi bi-x"></i>
                   </button>
                 )}
               </div>
@@ -132,7 +130,7 @@ export default function VehicleListPage() {
                   className={`btn btn-sm ${riskFilter === 'HIGH' ? 'btn-danger' : 'btn-outline-danger'}`}
                   onClick={() => setRiskFilter('HIGH')}
                 >
-                  High Risk
+                  High
                 </button>
                 <button
                   type="button"
@@ -175,12 +173,12 @@ export default function VehicleListPage() {
         {/* Content View */}
         {filteredVehicles.length === 0 ? (
           <div className="card shadow-sm p-5 text-center">
-            <div className="empty-state">
-              <i className="bi bi-search"></i>
+            <div className="empty-state py-4">
+              <i className="bi bi-car-front fs-1 text-muted mb-2"></i>
               <h5 className="fw-bold">No vehicles found</h5>
-              <p className="text-muted small">No vehicles matched your search criteria or filter.</p>
+              <p className="text-muted small">No vehicles match your active search filter.</p>
               {searchTerm && (
-                <button className="btn btn-outline-dark btn-sm" onClick={() => { setSearchTerm(''); setRiskFilter('ALL'); }}>
+                <button className="btn btn-outline-primary btn-sm mt-2" onClick={() => { setSearchTerm(''); setRiskFilter('ALL'); }}>
                   Clear Filters
                 </button>
               )}
@@ -193,9 +191,9 @@ export default function VehicleListPage() {
               <div className="garage-card" key={v.id}>
                 <div className="garage-card-header d-flex justify-content-between align-items-start">
                   <div>
-                    <div className="garage-vehicle-make">{v.make}</div>
+                    <div className="garage-vehicle-make">{v.make || 'VEHICLE'}</div>
                     <h3 className="garage-vehicle-title">{v.name}</h3>
-                    <div className="small text-light opacity-75">{v.model} • {v.year}</div>
+                    <div className="garage-vehicle-sub">{v.model} &bull; {v.year}</div>
                   </div>
                   <div>
                     {v.latest_risk_level === 'HIGH' ? (
@@ -216,23 +214,23 @@ export default function VehicleListPage() {
                     </span>
                     <span className="spec-chip">
                       <i className="bi bi-fuel-pump"></i>
-                      {v.engine_type || 'Standard Engine'}
+                      {v.engine_type || 'Standard'}
                     </span>
                     <span className="spec-chip">
-                      <i className="bi bi-calendar-check"></i>
+                      <i className="bi bi-calendar-event"></i>
                       {v.year}
                     </span>
                   </div>
 
                   <div className="vin-box">
                     <span className="text-muted">VIN</span>
-                    <code>{v.vin || 'VIN-UNASSIGNED'}</code>
+                    <code>{v.vin || 'UNASSIGNED'}</code>
                   </div>
 
                   {v.latest_fault_type && (
-                    <div className="p-2 rounded bg-light border small">
-                      <span className="text-muted d-block" style={{ fontSize: '0.72rem' }}>LAST DETECTED FAULT:</span>
-                      <span className="fw-bold text-dark">{v.latest_fault_type}</span>
+                    <div className="garage-fault-alert">
+                      <span className="fault-label">ACTIVE DIAGNOSTIC:</span>
+                      <span className="fault-text">{v.latest_fault_type}</span>
                     </div>
                   )}
                 </div>
@@ -251,8 +249,8 @@ export default function VehicleListPage() {
                       <i className="bi bi-trash"></i>
                     </button>
                   </div>
-                  <Link to={`/vehicles/${v.id}`} className="btn btn-sm btn-dark">
-                    <i className="bi bi-cpu me-1"></i>HUD Station
+                  <Link to={`/vehicles/${v.id}`} className="btn btn-sm btn-hero-cta">
+                    <i className="bi bi-cpu me-1"></i>View HUD
                   </Link>
                 </div>
               </div>
@@ -277,8 +275,8 @@ export default function VehicleListPage() {
                 <tbody>
                   {filteredVehicles.map((v) => (
                     <tr key={v.id}>
-                      <td className="fw-bold text-dark">
-                        <Link to={`/vehicles/${v.id}`} className="text-decoration-none text-dark">
+                      <td className="fw-bold">
+                        <Link to={`/vehicles/${v.id}`} className="text-decoration-none">
                           {v.name}
                         </Link>
                       </td>

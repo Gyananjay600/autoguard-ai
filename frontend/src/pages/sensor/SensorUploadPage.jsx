@@ -90,7 +90,7 @@ export default function SensorUploadPage() {
             <h2 className="fw-bold mb-0">Log IoT Sensor Reading</h2>
             <p className="text-muted small mb-0">Record real-time or field-calibrated sensor data points.</p>
           </div>
-          <Link to="/vehicles" className="btn btn-sm btn-outline-dark">
+          <Link to="/vehicles" className="btn btn-sm btn-outline-secondary">
             <i className="bi bi-arrow-left me-1"></i>Garage
           </Link>
         </div>
@@ -191,7 +191,7 @@ export default function SensorUploadPage() {
               <Link to="/vehicles" className="btn btn-outline-secondary">
                 Cancel
               </Link>
-              <button type="submit" className="btn btn-dark px-4" disabled={uploading}>
+              <button type="submit" className="btn btn-hero-cta px-4" disabled={uploading}>
                 {uploading ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status"></span>

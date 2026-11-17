@@ -378,7 +378,7 @@ export default function VehicleDetailPage() {
         {activeTab === 'sensors' && (
           <div>
             {/* Simulator Controls & Anomaly Injection Toolbar */}
-            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 p-3 bg-white border rounded-3 shadow-sm">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 p-3 rounded-3 shadow-sm border" style={{ background: 'var(--surface-card)' }}>
               <div className="d-flex gap-2 flex-wrap">
                 <button
                   type="button"
@@ -604,7 +604,7 @@ export default function VehicleDetailPage() {
                             <span className="badge bg-success">LOW RISK</span>
                           )}
                         </td>
-                        <td className="fw-semibold text-dark">{a.predicted_fault_type}</td>
+                        <td className="fw-semibold">{a.predicted_fault_type}</td>
                         <td className="small text-muted" style={{ maxWidth: '320px' }}>
                           {a.explanations && a.explanations.length > 0 ? (
                             <div className="text-truncate">
@@ -617,7 +617,7 @@ export default function VehicleDetailPage() {
                         <td className="text-end">
                           <button
                             type="button"
-                            className="btn btn-sm btn-outline-dark"
+                            className="btn btn-sm btn-outline-secondary"
                             onClick={() => {
                               const exp = a.explanations?.[0];
                               setAiResult({
@@ -718,7 +718,7 @@ export default function VehicleDetailPage() {
                           <tr key={m.id}>
                             <td className="small text-muted">{m.date}</td>
                             <td>
-                              <div className="fw-bold text-dark">{m.action}</div>
+                              <div className="fw-bold">{m.action}</div>
                               {m.notes && <div className="small text-muted">{m.notes}</div>}
                             </td>
                             <td>
@@ -821,11 +821,11 @@ export default function VehicleDetailPage() {
                   </div>
                   <div>
                     <div className="small text-muted">Predicted Issue:</div>
-                    <div className="fw-bold text-dark">{aiResult.predictedFaultType}</div>
+                    <div className="fw-bold">{aiResult.predictedFaultType}</div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-white border rounded-3 mb-3">
+                <div className="p-3 border rounded-3 mb-3" style={{ background: 'var(--surface-subtle, rgba(255,255,255,0.03))' }}>
                   <h6 className="fw-bold mb-3 text-primary"><i className="bi bi-robot me-1.5"></i>AI Technical Findings:</h6>
                   <div
                     className="report-content"
@@ -841,7 +841,7 @@ export default function VehicleDetailPage() {
                 </div>
               </div>
 
-              <div className="modal-footer p-3 bg-light">
+              <div className="modal-footer p-3">
                 <button type="button" className="btn btn-outline-secondary" onClick={() => setAiModalOpen(false)}>
                   Close
                 </button>

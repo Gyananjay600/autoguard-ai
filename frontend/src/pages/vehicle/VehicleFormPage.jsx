@@ -96,7 +96,7 @@ export default function VehicleFormPage() {
             </div>
             <h2 className="fw-bold mb-0">{isEdit ? 'Edit Vehicle Specifications' : 'Register New Fleet Asset'}</h2>
           </div>
-          <Link to="/vehicles" className="btn btn-sm btn-outline-dark">
+          <Link to="/vehicles" className="btn btn-sm btn-outline-secondary">
             <i className="bi bi-arrow-left me-1"></i>Back to Garage
           </Link>
         </div>
@@ -215,7 +215,7 @@ export default function VehicleFormPage() {
               <Link to="/vehicles" className="btn btn-outline-secondary">
                 Cancel
               </Link>
-              <button type="submit" className="btn btn-dark px-4" disabled={saving}>
+              <button type="submit" className="btn btn-hero-cta px-4" disabled={saving}>
                 {saving ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2" role="status"></span>
